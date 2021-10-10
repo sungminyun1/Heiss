@@ -1,10 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Modal from "react-modal";
 import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
 import { onCanvasData } from "../redux/modules/review";
-import { getUserCart, handleAlertModal } from "../redux/modules/users";
+import "./lockerModal.css";
+import {
+	getUserCart,
+	handleAlertModal,
+	handleConfirmModal,
+} from "../redux/modules/users";
 import LockerModal from "../modal/LockerModal";
 import axios from "axios";
 
@@ -72,32 +77,6 @@ const HoverThumb = styled.div`
 	}
 `;
 
-const ThumbnailModal = {
-	overlay: {
-		position: "fixed",
-		top: 0,
-		left: 0,
-		right: 0,
-		bottom: 0,
-		backgroundColor: "rgba(255, 255, 255, 0.45)",
-		zIndex: 2,
-	},
-	content: {
-		display: "flex",
-		justifyContent: "center",
-		border: "1px solid #0f0d00",
-		background: "#0f0d00",
-		margin: "0 auto",
-		overflow: "auto",
-		width: "80vw",
-		WebkitOverflowScrolling: "touch",
-		borderRadius: "4px",
-		outline: "none",
-		padding: "0.1rem",
-		zIndex: 2,
-	},
-};
-
 const BgnHover = styled.div`
 	${BgnHovers}
 `;
@@ -107,7 +86,7 @@ const NonData = styled.div`
 	width: 100%;
 `;
 
-const Locker = ({ data, getMyCase }) => {
+const Locker = ({ data }) => {
 	const [modal, setModal] = useState(false);
 	const history = useHistory();
 	const dispatch = useDispatch();
@@ -118,14 +97,7 @@ const Locker = ({ data, getMyCase }) => {
 
 	// locker 삭제 핸들러
 	const onDelHandler = () => {
-		if (window.confirm("삭제하시겠습니까?")) {
-			axios
-				.delete(`${process.env.REACT_APP_API_URL}locker/${data.id}`)
-				.then(() => {
-					dispatch(handleAlertModal("삭제되었습니다"));
-					getMyCase();
-				});
-		}
+		dispatch(handleConfirmModal("삭제하시겠습니까?", data.id));
 	};
 
 	// 장바구니 추가 핸들러
@@ -165,11 +137,12 @@ const Locker = ({ data, getMyCase }) => {
 		<LockerAllBox>
 			<Modal
 				isOpen={modal}
-				style={ThumbnailModal}
+				className="lockerContent"
+				overlayClassName="lockerOverlay"
 				onRequestClose={modalHandler}
 				ariaHideApp={false}
 			>
-				<img src={data.img} alt="img" />
+				<img className="lockerImg" src={data.img} alt="img" />
 				<LockerModal dataId={data.id} onClick={modalHandler} />
 			</Modal>
 			<ThumbnailSection>

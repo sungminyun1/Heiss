@@ -1,19 +1,16 @@
 import React, { useState, useCallback, useEffect } from "react";
 import styled from "styled-components";
-import Modal from "react-modal";
 import axios from "axios";
-
 import { useHistory } from "react-router";
 import { flexCenter, color } from "../components/utils/theme";
 import { useDispatch, useSelector } from "react-redux";
+import { getUserLocker } from "../redux/modules/users";
 import {
-	getUserLocker,
-	getUserInfo,
-	newUserInfo,
-	patchUserInfo,
-} from "../redux/modules/users";
-import * as Yup from "yup";
-import { useFormik } from "formik";
+	FormOutlined,
+	BookOutlined,
+	CreditCardOutlined,
+	ShoppingOutlined,
+} from "@ant-design/icons";
 
 // 컴포넌트
 import Nav from "./Nav";
@@ -21,6 +18,12 @@ import Locker from "../components/Locker";
 import Cart from "../components/Cart";
 import PutUserInfo from "../components/PutUserInfo";
 import OrderList from "../components/OrderList";
+
+// 이미지
+import navi1 from "../img/navi1.svg";
+import navi2 from "../img/navi2.svg";
+import navi3 from "../img/navi3.svg";
+import navi4 from "../img/navi4.svg";
 
 axios.defaults.withCredentials = true;
 
@@ -35,6 +38,11 @@ const MypageSection = styled.div`
 	&::-webkit-scrollbar {
 		display: none;
 	}
+
+	.bottomNavIcon {
+		font-size: 3.5rem;
+		cursor: pointer;
+	}
 `;
 
 const MypageBox = styled.div`
@@ -43,8 +51,9 @@ const MypageBox = styled.div`
 	padding: 1rem;
 
 	.title {
-		font-size: 1.5rem;
+		font-size: 2rem;
 		font-weight: bold;
+		color: ${color.point};
 		width: 100%;
 	}
 `;
@@ -55,7 +64,7 @@ const CategoryBox = styled.div`
 	width: 220px;
 	height: 40vh;
 	position: sticky;
-	top: 0;
+	top: 10%;
 	background: ${color.basic};
 	border-radius: 1vh;
 	box-sizing: border-box;
@@ -82,13 +91,12 @@ const CategoryBox = styled.div`
 			font-weight: bold;
 		}
 
-		@media ${(props) => props.theme.tablet} {
+		@media (max-width: 1300px) {
 			flex-direction: column;
 			align-items: center;
 
 			.username {
-				margin-top: 0.8rem;
-				font-size: 1rem;
+				margin-top: 1rem;
 			}
 		}
 	}
@@ -106,11 +114,7 @@ const CategoryBox = styled.div`
 		}
 	}
 
-	@media ${(props) => props.theme.tablet} {
-		width: 13vw;
-	}
-
-	@media ${(props) => props.theme.mobileL} {
+	@media (max-width: 1280px) {
 		display: none;
 	}
 `;
@@ -131,12 +135,12 @@ const MainSection = styled.ul`
 		margin-bottom: 3rem;
 	}
 
-	@media ${(props) => props.theme.tablet} {
-		width: 76vw;
-	}
-
 	@media ${(props) => props.theme.mobileL} {
 		width: 100vw;
+	}
+
+	@media (max-width: 1280px) {
+		width: 100%;
 	}
 `;
 
@@ -144,10 +148,68 @@ const SaveBox = styled.div`
 	display: flex;
 	flex-wrap: wrap;
 	height: 100%;
+
+	@media ${(props) => props.theme.tablet} {
+		justify-content: center;
+	}
+`;
+
+const BottomNav = styled.div`
+	width: 100%;
+	height: 90px;
+	background: ${color.basic};
+	position: fixed;
+	bottom: 0%;
+	display: none;
+
+	@media (max-width: 1280px) {
+		display: flex;
+		justify-content: space-around;
+		align-items: flex-end;
+		.bottomUser {
+			width: 5rem;
+			height: 5rem;
+			min-width: 5rem;
+			min-height: 5rem;
+			border-radius: 50%;
+			overflow: hidden;
+			background: ${color.darkBasic};
+			box-shadow: -3px 3px 3px ${color.darkBasic};
+			margin-bottom: 0.3rem;
+			.bottomUserImg {
+				width: 5rem;
+				height: 5rem;
+			}
+		}
+
+		.bottomNavIcon {
+			${flexCenter}
+			min-width: 50px;
+			min-height: 50px;
+			width: 4rem;
+			height: 4rem;
+			margin-bottom: 0.5rem;
+			background: ${color.lightBasic};
+			border-radius: 50%;
+			border: none;
+			box-shadow: 3px 3px 3px ${color.darkBasic};
+			margin-bottom: 0.8rem;
+
+			&:hover {
+				transform: scale(1.02);
+			}
+
+			img {
+				height: 60%;
+				width: 60%;
+			}
+		}
+	}
 `;
 
 const Mypage = () => {
 	const history = useHistory();
+	const dispatch = useDispatch();
 
 	// cart 배열 받을 상태
 	const [cartArr, setCartArr] = useState([]);
@@ -158,10 +220,8 @@ const Mypage = () => {
 				history.push("/");
 			}
 		});
-		getMyCase();
+		dispatch(getUserLocker());
 	}, []);
-
-	const [locker, setLocker] = useState([]);
 
 	const handleToShop = useCallback(() => {
 		document.querySelector(".shop").scrollIntoView({ behavior: "smooth" });
@@ -181,14 +241,8 @@ const Mypage = () => {
 			.scrollIntoView({ behavior: "smooth" });
 	}, []);
 
-	const getMyCase = () => {
-		axios
-			.get(`${process.env.REACT_APP_API_URL}locker`)
-			.then((res) => res.data)
-			.then((data) => setLocker(data.data));
-	};
-
 	const userinfo = useSelector((state) => state.user);
+	const locker = useSelector((state) => state.user.userlocker);
 
 	return (
 		<MypageSection>
@@ -211,7 +265,7 @@ const Mypage = () => {
 						<div className="title">보관함</div>
 						<SaveBox>
 							{locker.map((data) => (
-								<Locker data={data} key={data.id} getMyCase={getMyCase} />
+								<Locker data={data} key={data.id} />
 							))}
 						</SaveBox>
 					</li>
@@ -229,6 +283,27 @@ const Mypage = () => {
 					</li>
 				</MainSection>
 			</MypageBox>
+			<BottomNav>
+				<div className="bottomNavIcon" onClick={handleToSaveBox}>
+					<img src={navi1} />
+				</div>
+				<div className="bottomNavIcon" onClick={handleToShop}>
+					<img src={navi2} />
+				</div>
+				<div className="bottomUser">
+					<img
+						src={userinfo.userInfo.profileImg}
+						alt="profile"
+						className="bottomUserImg"
+					/>
+				</div>
+				<div className="bottomNavIcon" onClick={handleToOrderList}>
+					<img src={navi3} />
+				</div>
+				<div className="bottomNavIcon" onClick={handleToPutUserinfo}>
+					<img src={navi4} />
+				</div>
+			</BottomNav>
 		</MypageSection>
 	);
 };

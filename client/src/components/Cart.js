@@ -64,6 +64,12 @@ const MoneyBox = styled.div`
 
 	h3 {
 		margin-bottom: 0.5rem;
+		@media ${(props) => props.theme.tablet} {
+			font-size: 1rem;
+		}
+		@media (max-width: 430px) {
+			text-align: center;
+		}
 	}
 
 	.plus {
@@ -74,6 +80,22 @@ const MoneyBox = styled.div`
 	.all_money {
 		font-size: 3rem;
 		color: ${color.point};
+		@media ${(props) => props.theme.tablet} {
+			font-size: 2rem;
+		}
+		@media (max-width: 430px) {
+			font-size: 1.5rem;
+		}
+	}
+
+	.allPrice {
+		font-size: 1.5rem;
+		margin-bottom: 0.8rem;
+		font-weight: bold;
+		@media (max-width: 430px) {
+			font-size: 1.2rem;
+			margin-bottom: 2rem;
+		}
 	}
 `;
 
@@ -88,6 +110,11 @@ const Shipping = styled.div`
 	input {
 		width: 13rem;
 		border-radius: 2vh;
+		@media ${(props) => props.theme.tablet} {
+			&::placeholder {
+				font-size: 1rem;
+			}
+		}
 	}
 
 	div {
@@ -197,11 +224,11 @@ const Cart = ({ name }) => {
 					)}
 				</Shipping>
 				<MoneyBox>
-					<h2>총 구매 금액</h2>
+					<p className="allPrice">총 구매 금액</p>
 					<h3>총 상품 금액 {money}원</h3>
 					<h3 className="plus">+</h3>
-					<h3>총 배송비 {delivery}원</h3>
-					<h1 className="all_money">{money + delivery}원</h1>
+					<h3>총 배송비 {money === 0 ? 0 : delivery}원</h3>
+					<h1 className="all_money">{money === 0 ? 0 : money + delivery}원</h1>
 				</MoneyBox>
 			</OrderBox>
 			<Pay

@@ -53,6 +53,7 @@ const PutUserInfoBox = styled.div`
 	.btnBox {
 		display: flex;
 		justify-content: center;
+		margin-bottom: 5rem;
 
 		.btn {
 			width: 8rem;
@@ -78,6 +79,7 @@ const PutUserInfoBox = styled.div`
 
 const ImgDiv = styled.div`
 	${ImgDivs}
+	margin-top:4rem;
 `;
 
 // 모달 디자인
@@ -125,8 +127,10 @@ const passwordModal = {
 		background: "#0f0d00",
 		margin: "0 auto",
 		overflow: "auto",
-		height: "30vh",
-		width: "40vw",
+		top: "35vh",
+		bottom: "35vh",
+		right: "35vw",
+		left: "35vw",
 		WebkitOverflowScrolling: "touch",
 		borderRadius: "4px",
 		outline: "none",
