@@ -1,0 +1,10 @@
+"use strict";
+var express = require("express");
+var router = express.Router();
+var controller = require("../controllers");
+router.get("/", controller.getCart);
+router.post("/", controller.postCart);
+router.patch("/", controller.patchCart);
+router.delete("/:id", controller.deleteCart);
+router.delete("/", controller.deleteAllCart);
+module.exports = router;

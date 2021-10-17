@@ -13,7 +13,7 @@ const upload = multer(
 			s3: s3,
 			bucket: "heiss-images",
 			acl: "public-read",
-			key: function (req, file, cb) {
+			key: function (req: any, file: any, cb:any) {
 				cb(null, Date.now() + "." + file.originalname.split(".").pop()); // 이름 설정
 			},
 		}),
